@@ -31,6 +31,7 @@ fi
 NODES=(
     "https://github.com/ltdrdata/ComfyUI-Manager"
     "https://github.com/kijai/ComfyUI-WanVideoWrapper"
+    "https://github.com/lehych-sol/Custom-Nodes-1.0"
     "https://github.com/rgthree/rgthree-comfy"
     "https://github.com/kijai/ComfyUI-KJNodes"
     "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite"
