@@ -280,6 +280,33 @@ download_models "${COMFYUI_DIR}/models/detection"         "${DETECTION_MODELS[@]
  
 print_end
  
-echo "Step 4/4: Launching ComfyUI..."
+echo "Step 4/4: Installing Jupyter..."
+pip install jupyter notebook
+
+echo "Step 5/5: Launching ComfyUI + Jupyter..."
 cd "$COMFYUI_DIR"
-python main.py --listen 0.0.0.0 --port 8188
+
+# Запускаем ComfyUI в фоне
+python main.py --listen 0.0.0.0 --port 8188 &
+
+# Запускаем Jupyter
+jupyter notebook \
+    --ip=0.0.0.0 \
+    --port=8888 \
+    --no-browser \
+    --allow-root \
+    --NotebookApp.token='' \
+    --NotebookApp.password='' \
+    --notebook-dir=/workspace
+
+# Ждём чтобы контейнер не закрылся
+wait
+```
+
+---
+
+## Шаг 2 — В темплейте RunPod добавь порт
+
+В поле **"Expose HTTP Ports"** укажи оба порта:
+```
+8188, 8888
