@@ -1,166 +1,160 @@
 #!/bin/bash
 set -e
-
 source /venv/main/bin/activate
 
 WORKSPACE=${WORKSPACE:-/workspace}
-COMFYUI_DIR=${WORKSPACE}/ComfyUI
+COMFYUI_DIR="${WORKSPACE}/ComfyUI"
 
-echo "=== Vast.ai ComfyUI provisioning ==="
+APT_PACKAGES=()
+PIP_PACKAGES=()
 
-# ─────────────────────────────────────────────
-# 1. Clone ComfyUI
-# ─────────────────────────────────────────────
-if [[ ! -d "${COMFYUI_DIR}" ]]; then
-    echo "Cloning ComfyUI..."
-    git clone https://github.com/comfyanonymous/ComfyUI.git "${COMFYUI_DIR}"
-fi
-
-cd "${COMFYUI_DIR}"
-
-# ─────────────────────────────────────────────
-# 2. Install base requirements
-# ─────────────────────────────────────────────
-if [[ -f requirements.txt ]]; then
-    pip install --no-cache-dir -r requirements.txt
-fi
-
-# ─────────────────────────────────────────────
-# 3. CONFIG
-# ─────────────────────────────────────────────
 NODES=(
-    "https://github.com/ltdrdata/ComfyUI-Manager"
-    "https://github.com/kijai/ComfyUI-WanVideoWrapper"
-    "https://github.com/lehych-sol/Custom-Nodes-1.0"
-    "https://github.com/rgthree/rgthree-comfy"
-    "https://github.com/kijai/ComfyUI-KJNodes"
-    "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite"
-    "https://github.com/kijai/ComfyUI-WanAnimatePreprocess"
-    "https://github.com/Fannovel16/comfyui_controlnet_aux"
-    "https://github.com/GACLove/ComfyUI-VFI"
-    "https://github.com/lehych-sol/Demon-Custom-Nodes"
+"https://github.com/chflame163/ComfyUI_LayerStyle"
+"https://github.com/yolain/ComfyUI-Easy-Use"
+"https://github.com/kijai/ComfyUI-KJNodes"
+"https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite"
+"https://github.com/kijai/ComfyUI-segment-anything-2"
+"https://github.com/cubiq/ComfyUI_essentials"
+"https://github.com/fq393/ComfyUI-ZMG-Nodes"
+"https://github.com/kijai/ComfyUI-WanAnimatePreprocess"
+"https://github.com/rgthree/rgthree-comfy"
+"https://github.com/jnxmx/ComfyUI_HuggingFace_Downloader"
+"https://github.com/lehych-sol/custom-nodes"
+"https://github.com/kijai/ComfyUI-WanVideoWrapper"
 )
 
-WAN_JSON_MODELS=(
-    "https://huggingface.co/diego97martinez/video_baile_stady_dancer/resolve/main/WAN2-1-SteadyDancer-FP8.json"
+CLIP_MODELS=(
+"https://huggingface.co/f5aiteam/CLIP/resolve/main/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
+"https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
 )
 
-WAN_FP8_MODELS=(
-    "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/SteadyDancer/Wan21_SteadyDancer_fp8_e4m3fn_scaled_KJ.safetensors"
+CLIPS=(
+"https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
 )
 
-LORA_MODELS=(
-    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors"
+UNET_MODELS=(
+"https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/diffusion_models/z_image_turbo_bf16.safetensors"
 )
 
 VAE_MODELS=(
-    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/a328a632b80d44062fda7df9b6b1a7b2c3a5cf2c/Wan2_1_VAE_bf16.safetensors"
+"https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors"
 )
 
-CLIP_VISION_MODELS=(
-    "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
-)
-
-TEXT_ENCODER_MODELS=(
-    "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp16.safetensors"
-)
-
-UPSCALE_MODELS=(
-    "https://raw.githubusercontent.com/gamefurius32-lgtm/upsclane1xskin/main/1xSkinContrast-SuperUltraCompact%20(3).pth"
-)
-
-WAN_ANIMATE_MODELS=(
-    "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/Wan22Animate/Wan2_2-Animate-14B_fp8_scaled_e4m3fn_KJ_v2.safetensors"
-)
-
-LORA_MODELS_EXTRA=(
-    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_I2V_14B_480p_cfg_step_distill_rank256_bf16.safetensors"
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors"
-    "https://huggingface.co/alibaba-pai/Wan2.2-Fun-Reward-LoRAs/resolve/main/Wan2.2-Fun-A14B-InP-low-noise-HPS2.1.safetensors"
-    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Pusa/Wan21_PusaV1_LoRA_14B_rank512_bf16.safetensors"
-)
-
-TEXT_ENCODER_FP8=(
-    "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
-)
-
-VAE_MODELS_NEW=(
-    "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors"
-)
-
-CLIP_VISION_NEW=(
-    "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
+CONTROLNET_MODELS=(
+"https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan21_Uni3C_controlnet_fp16.safetensors"
 )
 
 DETECTION_MODELS=(
-    "https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-l-wholebody.onnx"
-    "https://huggingface.co/Wan-AI/Wan2.2-Animate-14B/resolve/main/process_checkpoint/det/yolov10m.onnx"
-    "https://huggingface.co/Kijai/vitpose_comfy/resolve/main/onnx/vitpose_h_wholebody_model.onnx"
-    "https://huggingface.co/Kijai/vitpose_comfy/resolve/main/onnx/vitpose_h_wholebody_data.bin"
+"https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/Wan22Animate/Wan2_2-Animate-14B_fp8_scaled_e4m3fn_KJ_v2.safetensors"
+"https://huggingface.co/Wan-AI/Wan2.2-Animate-14B/resolve/main/process_checkpoint/det/yolov10m.onnx"
+"https://huggingface.co/Kijai/vitpose_comfy/resolve/main/onnx/vitpose_h_wholebody_data.bin"
+"https://huggingface.co/Kijai/vitpose_comfy/resolve/main/onnx/vitpose_h_wholebody_model.onnx"
 )
-# ─────────────────────────────────────────────
-# 4. FUNCTIONS
-# ─────────────────────────────────────────────
-download_files() {
-    local dir="$1"
-    shift
-    mkdir -p "$dir"
 
-    for url in "$@"; do
-        echo "Downloading: $url"
-        if [[ -n "$HF_TOKEN" && "$url" =~ huggingface.co ]]; then
-            wget --header="Authorization: Bearer $HF_TOKEN" \
-                 -nc --content-disposition -P "$dir" "$url"
+UPSCALER_MODELS=(
+"https://huggingface.co/arhiteector/loras/resolve/main/wanvideohelper/low.pt"
+"https://huggingface.co/arhiteector/loras/resolve/main/wanvideohelper/005_colorDN_DFWB_s128w8_SwinIR-M_noise15.pth"
+)
+
+LORAS=(
+"https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_I2V_14B_480p_cfg_step_distill_rank256_bf16.safetensors"
+"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors"
+"https://huggingface.co/alibaba-pai/Wan2.2-Fun-Reward-LoRAs/resolve/main/Wan2.2-Fun-A14B-InP-low-noise-HPS2.1.safetensors"
+"https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Pusa/Wan21_PusaV1_LoRA_14B_rank512_bf16.safetensors"
+)
+
+DEFFUSION=(
+"https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/Wan22Animate/Wan2_2-Animate-14B_fp8_scaled_e4m3fn_KJ_v2.safetensors"
+)
+
+function provisioning_start() {
+    provisioning_get_apt_packages
+    provisioning_clone_comfyui
+    provisioning_install_base_reqs
+    provisioning_get_nodes
+    provisioning_get_pip_packages
+
+    provisioning_get_files "${COMFYUI_DIR}/models/clip" "${CLIP_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/clip_vision" "${CLIP_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/text_encoders" "${TEXT_ENCODERS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/vae" "${VAE_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/diffusion_models" "${DIFFUSION_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/controlnet" "${CONTROLNET_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/detection" "${DETECTION_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/loras" "${LORAS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/upscale_models" "${UPSCALER_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/diffusion_models" "${DEFFUSION[@]}"
+}
+
+function provisioning_clone_comfyui() {
+    if [[ ! -d "${COMFYUI_DIR}" ]]; then
+        git clone https://github.com/comfyanonymous/ComfyUI.git "${COMFYUI_DIR}"
+    fi
+    cd "${COMFYUI_DIR}"
+}
+
+function provisioning_install_base_reqs() {
+    if [[ -f requirements.txt ]]; then
+        pip install --no-cache-dir -r requirements.txt
+    fi
+}
+
+function provisioning_get_apt_packages() {
+    if [[ ${#APT_PACKAGES[@]} -gt 0 ]]; then
+        sudo apt update && sudo apt install -y "${APT_PACKAGES[@]}"
+    fi
+}
+
+function provisioning_get_pip_packages() {
+    if [[ ${#PIP_PACKAGES[@]} -gt 0 ]]; then
+        pip install --no-cache-dir "${PIP_PACKAGES[@]}"
+    fi
+}
+
+function provisioning_get_nodes() {
+    mkdir -p "${COMFYUI_DIR}/custom_nodes"
+    cd "${COMFYUI_DIR}/custom_nodes"
+
+    for repo in "${NODES[@]}"; do
+        dir="${repo##*/}"
+        path="./${dir}"
+
+        if [[ -d "$path" ]]; then
+            (cd "$path" && git pull --ff-only 2>/dev/null  { git fetch && git reset --hard origin/main; })
         else
-            wget -nc --content-disposition -P "$dir" "$url"
+            git clone "$repo" "$path" --recursive  true
+        fi
+
+        requirements="${path}/requirements.txt"
+        if [[ -f "$requirements" ]]; then
+            pip install --no-cache-dir -r "$requirements"  true
         fi
     done
 }
 
-# ─────────────────────────────────────────────
-# 5. Custom nodes
-# ─────────────────────────────────────────────
-mkdir -p custom_nodes
+function provisioning_get_files() {
+    if [[ $# -lt 2 ]]; then return; fi
+    local dir="$1"
+    shift
+    local files=("$@")
 
-for repo in "${NODES[@]}"; do
-    dir="${repo##*/}"
-    path="custom_nodes/${dir}"
-    requirements="${path}/requirements.txt"
+    mkdir -p "$dir"
 
-    if [[ -d "$path" ]]; then
-        echo "Updating node: $dir"
-        (cd "$path" && git pull)
-    else
-        echo "Cloning node: $dir"
-        git clone "$repo" "$path" --recursive
-    fi
+    for url in "${files[@]}"; do
+        local auth_header=""
+        if [[ -n "$HF_TOKEN" && "$url" =~ huggingface\.co ]]; then
+            auth_header="--header=Authorization: Bearer $HF_TOKEN"
+        elif [[ -n "$CIVITAI_TOKEN" && "$url" =~ civitai\.com ]]; then
+            auth_header="--header=Authorization: Bearer $CIVITAI_TOKEN"
+        fi
 
-    [[ -f "$requirements" ]] && pip install --no-cache-dir -r "$requirements"
-done
+        wget $auth_header -nc --content-disposition -P "$dir" "$url"  true
+    done
+}
 
-# ─────────────────────────────────────────────
-# 6. Download models (ПРАВИЛЬНЫЕ ПУТИ)
-# ─────────────────────────────────────────────
+if [[ ! -f /.noprovisioning ]]; then
+    provisioning_start
+fi
 
-mkdir -p models/detection
-
-download_files "models/diffusion_models" "${WAN_JSON_MODELS[@]}"
-download_files "models/diffusion_models" "${WAN_FP8_MODELS[@]}"
-
-download_files "models/loras" "${LORA_MODELS[@]}"
-download_files "models/vae" "${VAE_MODELS[@]}"
-download_files "models/clip_vision" "${CLIP_VISION_MODELS[@]}"
-download_files "models/text_encoders" "${TEXT_ENCODER_MODELS[@]}"
-download_files "models/upscale_models" "${UPSCALE_MODELS[@]}"
-download_files "models/diffusion_models" "${WAN_ANIMATE_MODELS[@]}"
-download_files "models/loras" "${LORA_MODELS_EXTRA[@]}"
-download_files "models/text_encoders" "${TEXT_ENCODER_FP8[@]}"
-download_files "models/vae" "${VAE_MODELS_NEW[@]}"
-download_files "models/clip_vision" "${CLIP_VISION_NEW[@]}"
-download_files "models/detection" "${DETECTION_MODELS[@]}"
-
-# ─────────────────────────────────────────────
-# 7. Launch
-# ─────────────────────────────────────────────
-echo "=== Starting ComfyUI ==="
+cd "${COMFYUI_DIR}"
 python main.py --listen 0.0.0.0 --port 8188
