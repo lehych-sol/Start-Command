@@ -4,7 +4,7 @@ import subprocess
 base = "/workspace/ComfyUI/models"
 
 downloads = [
-    ("clip", "https://huggingface.co/f5aiteam/CLIP/resolve/main/umt5_xxl_fp8_e4m3fn_scaled.safetensors"),
+    ("clip", "https://huggingface.co/chatpig/encoder/resolve/main/umt5_xxl_fp16.safetensors"),
     ("clip_vision", "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"),
     ("vae", "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors"),
     ("diffusion_models", "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/Wan22Animate/Wan2_2-Animate-14B_fp8_scaled_e4m3fn_KJ_v2.safetensors"),
@@ -18,6 +18,8 @@ downloads = [
     ("loras", "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors"),
     ("loras", "https://huggingface.co/alibaba-pai/Wan2.2-Fun-Reward-LoRAs/resolve/main/Wan2.2-Fun-A14B-InP-low-noise-HPS2.1.safetensors"),
     ("loras", "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Pusa/Wan21_PusaV1_LoRA_14B_rank512_bf16.safetensors"),
+    ("loras", "https://huggingface.co/lehychh/Video/resolve/main/BounceHighWan2_2.safetensors"),
+    ("loras", "https://huggingface.co/lehychh/Video/resolve/main/BounceLowWan2_2.safetensors"),
 ]
 
 for folder, url in downloads:
