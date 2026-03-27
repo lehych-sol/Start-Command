@@ -19,7 +19,6 @@ downloads = [
     ("loras", "https://huggingface.co/alibaba-pai/Wan2.2-Fun-Reward-LoRAs/resolve/main/Wan2.2-Fun-A14B-InP-low-noise-HPS2.1.safetensors"),
     ("loras", "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Pusa/Wan21_PusaV1_LoRA_14B_rank512_bf16.safetensors"),
     ("loras", "https://huggingface.co/lehychh/Video/resolve/main/BounceHighWan2_2.safetensors"),
-    ("loras", "https://huggingface.co/lehychh/Video/resolve/main/BounceLowWan2_2.safetensors"),
 ]
 
 for folder, url in downloads:
