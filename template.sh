@@ -37,6 +37,9 @@ NODES=(
     "https://github.com/plugcrypt/CRT-Nodes"
     "https://github.com/EllangoK/ComfyUI-post-processing-nodes"
     "https://github.com/Fannovel16/comfyui_controlnet_aux"
+    "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite"
+    "https://github.com/kijai/ComfyUI-WanAnimatePreprocess"
+    "https://github.com/GACLove/ComfyUI-VFI"
 )
  
 # ─────────────── FUNCTIONS ───────────────
