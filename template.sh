@@ -17,7 +17,7 @@ NODES=(
     "https://github.com/ltdrdata/ComfyUI-Impact-Pack"
     "https://github.com/pythongosssss/ComfyUI-Custom-Scripts"
     "https://github.com/chflame163/ComfyUI_LayerStyle"
-    "https://github.com/lehych-sol/custom-nodes-2"
+    "https://github.com/lehych-sol/geek-nodes"
     "https://github.com/lehych-sol/custom-nodes"
     "https://github.com/thatboymentor/ofmtechclip"
     "https://github.com/rgthree/rgthree-comfy"
