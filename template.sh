@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+#set -e
 source /venv/main/bin/activate
 WORKSPACE=${WORKSPACE:-/workspace}
 COMFYUI_DIR="${WORKSPACE}/ComfyUI"
