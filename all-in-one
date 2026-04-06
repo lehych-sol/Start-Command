@@ -56,6 +56,8 @@ function provisioning_clone_comfyui() {
         git clone https://github.com/comfyanonymous/ComfyUI.git "${COMFYUI_DIR}"
     fi
     cd "${COMFYUI_DIR}"
+    git pull
+    pip install --no-cache-dir -r requirements.txt
 }
  
 function provisioning_install_base_reqs() {
