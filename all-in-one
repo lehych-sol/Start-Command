@@ -26,7 +26,7 @@ NODES=(
     "https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler"
     "https://github.com/cubiq/ComfyUI_essentials"
     "https://github.com/ClownsharkBatwing/RES4LYF"
-    "https://github.com/lehych-sol/comfy-services"
+    "https://github.com/jnxmx/ComfyUI_HuggingFace_Downloader"
     "https://github.com/chrisgoringe/cg-use-everywhere"
     "https://github.com/ltdrdata/ComfyUI-Impact-Subpack"
     "https://github.com/Smirnov75/ComfyUI-mxToolkit"
@@ -99,7 +99,25 @@ function provisioning_get_nodes() {
 if [[ ! -f /.noprovisioning ]]; then
     provisioning_start
 fi
- 
+
+# ─────────────── СЕРВИСЫ ───────────────
+echo "=== Устанавливаем зависимости сервисов ==="
+pip install --no-cache-dir fastapi uvicorn requests huggingface_hub aiofiles python-multipart
+
+echo "=== Клонируем сервисы ==="
+if [[ ! -d "${WORKSPACE}/services" ]]; then
+    git clone https://github.com/lehych-sol/comfy-services.git /tmp/comfy-services
+    cp -r /tmp/comfy-services/services "${WORKSPACE}/services"
+else
+    echo "Сервисы уже установлены, обновляем..."
+    git -C /tmp/comfy-services pull --ff-only 2>/dev/null || git clone https://github.com/lehych-sol/comfy-services.git /tmp/comfy-services
+    cp -r /tmp/comfy-services/services "${WORKSPACE}/services"
+fi
+
+echo "=== Запускаем загрузчик пресетов (порт 8081) ==="
+cd "${WORKSPACE}"
+uvicorn services.preset_downloader:app --host 0.0.0.0 --port 8081 &
+
 echo "=== Starting ComfyUI ==="
 cd "${COMFYUI_DIR}"
 python main.py --listen 0.0.0.0 --port 8188
