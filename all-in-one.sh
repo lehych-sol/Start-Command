@@ -22,6 +22,7 @@ NODES=(
     "https://github.com/chflame163/ComfyUI_LayerStyle"
     "https://github.com/lehych-sol/geek-nodes"
     "https://github.com/lehych-sol/custom-nodes"
+    "https://github.com/Jasonzzt/ComfyUI-CacheDiT"
     "https://github.com/thatboymentor/ofmtechclip"
     "https://github.com/rgthree/rgthree-comfy"
     "https://github.com/yolain/ComfyUI-Easy-Use"
