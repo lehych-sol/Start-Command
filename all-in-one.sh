@@ -25,6 +25,7 @@ NODES=(
     "https://github.com/PGCRT/CRT-Nodes"
     "https://github.com/Jasonzzt/ComfyUI-CacheDiT"
     "https://github.com/thatboymentor/ofmtechclip"
+    "https://github.com/scraed/LanPaint"
     "https://github.com/rgthree/rgthree-comfy"
     "https://github.com/yolain/ComfyUI-Easy-Use"
     "https://github.com/teskor-hub/comfyui-teskors-utils"
