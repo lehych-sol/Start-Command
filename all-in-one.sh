@@ -28,6 +28,7 @@ NODES=(
     "https://github.com/scraed/LanPaint"
     "https://github.com/rgthree/rgthree-comfy"
     "https://github.com/yolain/ComfyUI-Easy-Use"
+    "https://github.com/facok/comfyui-meancache-z"
     "https://github.com/teskor-hub/comfyui-teskors-utils"
     "https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler"
     "https://github.com/cubiq/ComfyUI_essentials"
