@@ -15,6 +15,7 @@ NODES=(
     "https://github.com/ltdrdata/ComfyUI-Manager"
     "https://github.com/lehych-sol/Zen-Face-Detail"
     "https://github.com/lehych-sol/Camera-Forensic-Realism"
+    "https://github.com/Clybius/ComfyUI-Latent-Modifiers"
     "https://github.com/lehych-sol/advanced-denoiser"
     "https://github.com/kijai/ComfyUI-WanVideoWrapper"
     "https://github.com/ltdrdata/ComfyUI-Impact-Pack"
