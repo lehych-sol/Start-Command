@@ -17,6 +17,7 @@ NODES=(
     "https://github.com/lehych-sol/Camera-Forensic-Realism"
     "https://github.com/MONKEYFOREVER2/comfyui-quantum-spectral-nodes"
     "https://github.com/lehych-sol/advanced-denoiser"
+    "https://github.com/lehych-sol/Stolen-Nodes"
     "https://github.com/kijai/ComfyUI-WanVideoWrapper"
     "https://github.com/ltdrdata/ComfyUI-Impact-Pack"
     "https://github.com/pythongosssss/ComfyUI-Custom-Scripts"
