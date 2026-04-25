@@ -15,6 +15,7 @@ NODES=(
     "https://github.com/ltdrdata/ComfyUI-Manager"
     "https://github.com/lehych-sol/Zen-Face-Detail"
     "https://github.com/lehych-sol/Camera-Forensic-Realism"
+    "https://github.com/lehych-sol/Custom-Nodes-by-lehych"
     "https://github.com/MONKEYFOREVER2/comfyui-quantum-spectral-nodes"
     "https://github.com/lehych-sol/advanced-denoiser"
     "https://github.com/lehych-sol/Stolen-Nodes"
