@@ -49,6 +49,7 @@ NODES=(
     "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite"
     "https://github.com/kijai/ComfyUI-WanAnimatePreprocess"
     "https://github.com/GACLove/ComfyUI-VFI"
+    "https://github.com/ShmuelRonen/ComfyUI-FishSpeech"
 )
  
 # ─────────────── FUNCTIONS ───────────────
@@ -65,7 +66,8 @@ function provisioning_clone_comfyui() {
         git clone https://github.com/comfyanonymous/ComfyUI.git "${COMFYUI_DIR}"
     fi
     cd "${COMFYUI_DIR}"
-    git pull
+    git fetch origin
+    git reset --hard origin/master
     pip install --no-cache-dir -r requirements.txt
 }
  
