@@ -1,12 +1,8 @@
 #!/bin/bash
-set -euo pipefail
-
+#set -e
 source /venv/main/bin/activate
-
 WORKSPACE=${WORKSPACE:-/workspace}
 COMFYUI_DIR="${WORKSPACE}/ComfyUI"
-SERVICES_REPO="/tmp/comfy-services"
-
 echo "=== ComfyUI запуск ==="
 
 APT_PACKAGES=(
@@ -31,7 +27,7 @@ NODES=(
     "https://github.com/lehych-sol/geek-nodes"
     "https://github.com/lehych-sol/custom-nodes"
     "https://github.com/Lightricks/ComfyUI-LTXVideo"
-    "https://github.com/PGCRT/CRT-Nodes CRT-Nodes-PGCRT"
+    "https://github.com/PGCRT/CRT-Nodes"
     "https://github.com/Jasonzzt/ComfyUI-CacheDiT"
     "https://github.com/thatboymentor/ofmtechclip"
     "https://github.com/scraed/LanPaint"
@@ -48,7 +44,7 @@ NODES=(
     "https://github.com/ZhiHui6/zhihui_nodes_comfyui"
     "https://github.com/kijai/ComfyUI-KJNodes"
     "https://github.com/crystian/ComfyUI-Crystools"
-    "https://github.com/plugcrypt/CRT-Nodes CRT-Nodes-plugcrypt"
+    "https://github.com/plugcrypt/CRT-Nodes"
     "https://github.com/EllangoK/ComfyUI-post-processing-nodes"
     "https://github.com/Fannovel16/comfyui_controlnet_aux"
     "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite"
@@ -57,6 +53,7 @@ NODES=(
     "https://github.com/ShmuelRonen/ComfyUI-FishSpeech"
 )
 
+# ─────────────── FUNCTIONS ───────────────
 function provisioning_start() {
     provisioning_get_apt_packages
     provisioning_clone_comfyui
@@ -66,11 +63,9 @@ function provisioning_start() {
 }
 
 function provisioning_clone_comfyui() {
-    if [[ ! -d "${COMFYUI_DIR}/.git" ]]; then
-        rm -rf "${COMFYUI_DIR}"
+    if [[ ! -d "${COMFYUI_DIR}" ]]; then
         git clone https://github.com/comfyanonymous/ComfyUI.git "${COMFYUI_DIR}"
     fi
-
     cd "${COMFYUI_DIR}"
     git fetch origin
     git reset --hard origin/master
@@ -78,7 +73,6 @@ function provisioning_clone_comfyui() {
 }
 
 function provisioning_install_base_reqs() {
-    cd "${COMFYUI_DIR}"
     if [[ -f requirements.txt ]]; then
         pip install --no-cache-dir -r requirements.txt
     fi
@@ -100,52 +94,37 @@ function provisioning_get_pip_packages() {
 function provisioning_get_nodes() {
     mkdir -p "${COMFYUI_DIR}/custom_nodes"
     cd "${COMFYUI_DIR}/custom_nodes"
-
-    for entry in "${NODES[@]}"; do
-        repo="${entry%% *}"
-        custom_dir="${entry#* }"
-        if [[ "${custom_dir}" == "${repo}" ]]; then
-            custom_dir="${repo##*/}"
-        fi
-
-        path="./${custom_dir}"
-        if [[ -d "${path}/.git" ]]; then
-            (cd "${path}" && git pull --ff-only) || echo "WARN: не удалось обновить ${custom_dir}, пропускаю"
+    for repo in "${NODES[@]}"; do
+        dir="${repo##*/}"
+        path="./${dir}"
+        if [[ -d "$path/.git" ]]; then
+            (cd "$path" && git pull --ff-only) || echo "WARN: не удалось обновить ${dir}, пропускаю"
         else
-            git clone --recursive "${repo}" "${path}"
+            git clone "$repo" "$path" --recursive
         fi
-
-        if [[ -f "${path}/requirements.txt" ]]; then
-            pip install --no-cache-dir -r "${path}/requirements.txt" || echo "WARN: requirements failed for ${custom_dir}, продолжаю"
+        if [[ -f "$path/requirements.txt" ]]; then
+            pip install --no-cache-dir -r "$path/requirements.txt"
         fi
     done
 }
 
-if [[ ! -f /.noprovisioning || ! -f "${COMFYUI_DIR}/main.py" ]]; then
+if [[ ! -f /.noprovisioning ]]; then
     provisioning_start
 fi
 
-if [[ ! -f "${COMFYUI_DIR}/main.py" ]]; then
-    echo "ERROR: ComfyUI не установлен: ${COMFYUI_DIR}/main.py не найден"
-    exit 1
-fi
-
+# ─────────────── СЕРВИСЫ ───────────────
 echo "=== Устанавливаем зависимости сервисов ==="
 pip install --no-cache-dir fastapi uvicorn requests huggingface_hub aiofiles python-multipart
 
 echo "=== Клонируем сервисы ==="
-if [[ -d "${SERVICES_REPO}/.git" ]]; then
-    git -C "${SERVICES_REPO}" pull --ff-only || {
-        rm -rf "${SERVICES_REPO}"
-        git clone https://github.com/lehych-sol/comfy-services.git "${SERVICES_REPO}"
-    }
+if [[ ! -d "${WORKSPACE}/services" ]]; then
+    git clone https://github.com/lehych-sol/comfy-services.git /tmp/comfy-services
+    cp -r /tmp/comfy-services/services "${WORKSPACE}/services"
 else
-    rm -rf "${SERVICES_REPO}"
-    git clone https://github.com/lehych-sol/comfy-services.git "${SERVICES_REPO}"
+    echo "Сервисы уже установлены, обновляем..."
+    git -C /tmp/comfy-services pull --ff-only 2>/dev/null || git clone https://github.com/lehych-sol/comfy-services.git /tmp/comfy-services
+    cp -r /tmp/comfy-services/services "${WORKSPACE}/services"
 fi
-
-rm -rf "${WORKSPACE}/services"
-cp -r "${SERVICES_REPO}/services" "${WORKSPACE}/services"
 
 echo "=== Запускаем загрузчик пресетов (порт 8081) ==="
 cd "${WORKSPACE}"
@@ -156,4 +135,4 @@ sudo rm -f /.provisioning 2>/dev/null || rm -f /.provisioning 2>/dev/null || tru
 
 echo "=== Starting ComfyUI ==="
 cd "${COMFYUI_DIR}"
-exec python main.py --listen 0.0.0.0 --port 8188
+python main.py --listen 0.0.0.0 --port 8188
