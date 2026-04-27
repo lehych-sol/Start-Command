@@ -22,6 +22,7 @@ NODES=(
     "https://github.com/kijai/ComfyUI-WanVideoWrapper"
     "https://github.com/ltdrdata/ComfyUI-Impact-Pack"
     "https://github.com/pythongosssss/ComfyUI-Custom-Scripts"
+    "https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler"
     "https://github.com/chflame163/ComfyUI_LayerStyle"
     "https://github.com/lehych-sol/geek-nodes"
     "https://github.com/lehych-sol/custom-nodes"
