@@ -156,6 +156,4 @@ disown
 echo "=== Снимаем блокировку provisioning для ComfyUI ==="
 sudo rm -f /.provisioning 2>/dev/null || rm -f /.provisioning 2>/dev/null || true
 
-echo "=== Starting ComfyUI ==="
-cd "${COMFYUI_DIR}"
-exec python main.py --listen 0.0.0.0 --port 8188
+echo "=== Provisioning завершён, ComfyUI запустится автоматически ==="
