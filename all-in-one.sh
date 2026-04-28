@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -uo pipefail
 
 source /venv/main/bin/activate
 
@@ -158,4 +158,3 @@ sudo rm -f /.provisioning 2>/dev/null || rm -f /.provisioning 2>/dev/null || tru
 echo "=== Starting ComfyUI ==="
 cd "${COMFYUI_DIR}"
 exec python main.py --listen 0.0.0.0 --port 8188
-
