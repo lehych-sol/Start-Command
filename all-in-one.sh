@@ -149,7 +149,7 @@ cp -r "${SERVICES_REPO}/services" "${WORKSPACE}/services"
 
 echo "=== Запускаем загрузчик пресетов (порт 8081) ==="
 cd "${WORKSPACE}"
-nohup uvicorn services.preset_downloader:app --host 0.0.0.0 --port 8081 > /var/log/preset_downloader.log 2>&1 &
+nohup /venv/main/bin/uvicorn services.preset_downloader:app --host 0.0.0.0 --port 8081 > /var/log/preset_downloader.log 2>&1 &
 disown
 
 echo "=== Снимаем блокировку provisioning для ComfyUI ==="
